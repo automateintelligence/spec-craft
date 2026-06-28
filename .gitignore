@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .pyright/
+.python-version
 
 # SDD scratch (task briefs, reports, review packages, progress ledger)
 .superpowers/
