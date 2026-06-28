@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+
+# SDD scratch (task briefs, reports, review packages, progress ledger)
+.superpowers/
+
+# OS / editor
+.DS_Store
+*.swp
