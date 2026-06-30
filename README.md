@@ -43,18 +43,22 @@ spec-craft is a Claude Code plugin. The runtime artifact is just two `SKILL.md` 
 a manifest — there is no service to run. (Python 3.12 in this repo is only for the
 plugin's own structural tests, not a dependency for using it.)
 
-### As a plugin (shared)
+### As a plugin (recommended)
 
-Once published to a marketplace (a `.claude-plugin/marketplace.json` that lists
-`spec-craft`):
+spec-craft is listed in the `automateintelligence` marketplace, so one command installs it
+(no conductor required — spec-craft is standalone):
 
 ```
-/plugin marketplace add automateintelligence/spec-craft
-/plugin install spec-craft@<marketplace-name>
+/plugin marketplace add automateintelligence/marketplace
+/plugin install spec-craft@automateintelligence
 ```
 
-> **Note:** this repo does not ship a `marketplace.json` yet, so the one-command install
-> above is not wired up today. Use the local method below until it is.
+CLI equivalents:
+
+```bash
+claude plugin marketplace add automateintelligence/marketplace
+claude plugin install spec-craft@automateintelligence
+```
 
 ### Locally (works today)
 
