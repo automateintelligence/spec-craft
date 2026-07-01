@@ -1,6 +1,6 @@
 ---
 name: expectations
-description: Use when a spec has no explicit definition of done. Adds an Expectations section (success scenarios, failure scenarios, must-nots) in domain language, owned by whoever wanted the outcome. Reads a spec path and writes the section into the spec. Pairs with /spec-craft:executable-assertions.
+description: Use when a spec's definition of done is implicit, or to refine a spec that already has an Expectations section. Adds or updates an Expectations section (success scenarios, failure scenarios, must-nots) in domain language, owned by whoever wanted the outcome. Reads a spec path and writes the section — creating it on a first run, or on a re-run diffing against the existing set to add only the genuinely missing gaps without duplicating what's already there. Pairs with /spec-craft:executable-assertions.
 ---
 
 # /spec-craft:expectations
@@ -47,8 +47,31 @@ executable assertions, or any code**, and do not propose how to verify the expec
 Encoding expectations as tests is a separate step (`/spec-craft:executable-assertions` → TDD).
 If you reach for verification mechanics, stop and note it for the next step.
 
+**Re-running on a spec that already has an `## Expectations` section.** When the spec already
+carries an Expectations section (a prior run, or one the owner authored), the job changes from
+*generating* a set to *diffing* against the one that exists — otherwise you re-derive a pile of
+near-duplicates that bury the few real gaps. In that case:
+
+- **Treat the existing set as input.** Read it first. Tag every gap you identify **`[COVERED]`**
+  (already addressed by the existing set — cite which success/failure/must-not) or **`[NEW]`** (a
+  genuine gap the existing set misses). The tagging forces a diff instead of regeneration.
+- **Add only the `[NEW]` items.** Leave `[COVERED]` ones alone — do not reword or "improve" the
+  owner's existing entries.
+- **Watch for over-generation.** If the `[NEW]` list is large relative to how much the existing set
+  already covers, you are probably padding — re-check and cut to the ones that close a real gap.
+  This is a nudge, not a quota; a genuinely under-specified spec can legitimately need many.
+- **Show the restraint.** Output a short **"deliberately did not add"** list — candidates you
+  considered and dropped, one line each (e.g. "covered by failure-3," "edges into verification
+  mechanics," "would duplicate an existing entry — one home per decision"). Restraint shown beats
+  padding to look thorough.
+
+A first run (no existing section) is unchanged: everything is new, so skip the tagging and just
+write the section.
+
 **Output / action:**
-1. Print the list of definition-of-done gaps you found.
+1. Print the list of definition-of-done gaps you found — on a re-run, tagged `[COVERED]`/`[NEW]`
+   plus the "deliberately did not add" list.
 2. Write an `## Expectations` section (the three parts) into the spec file at `$ARGUMENTS`
-   (append if absent; update in place if present). Keep it surgical — expectations that
-   restate the obvious add noise; keep the ones that close a real gap.
+   (append if absent; on a re-run, add only the `[NEW]` items in place — never regenerate or reword
+   the existing set). Keep it surgical — expectations that restate the obvious add noise; keep the
+   ones that close a real gap.
