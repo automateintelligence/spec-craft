@@ -57,6 +57,11 @@ near-duplicates that bury the few real gaps. In that case:
   genuine gap the existing set misses). The tagging forces a diff instead of regeneration.
 - **Add only the `[NEW]` items.** Leave `[COVERED]` ones alone — do not reword or "improve" the
   owner's existing entries.
+- **Preserve existing numbering.** If items are numbered, **append** new items with the next free
+  number — never renumber, reorder, or insert into the existing sequence. Numbered items may be
+  referenced by number (elsewhere in the spec, in existing assertion specs, or in code) and you
+  usually can't see every reference, so treat any numbering as load-bearing: a rewrite that shifts
+  the numbers silently breaks those cross-references.
 - **Watch for over-generation.** If the `[NEW]` list is large relative to how much the existing set
   already covers, you are probably padding — re-check and cut to the ones that close a real gap.
   This is a nudge, not a quota; a genuinely under-specified spec can legitimately need many.

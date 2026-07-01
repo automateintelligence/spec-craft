@@ -1,6 +1,6 @@
 ---
 name: executable-assertions
-description: Use after /spec-craft:expectations, when a spec's load-bearing expectations need to become machine-checkable. Selects the load-bearing ones and produces 4-part assertion specs (claim, setup, observation, kind). Specs only, no test code — feeds any downstream test runner.
+description: Use after /spec-craft:expectations, when a spec's load-bearing expectations need to become machine-checkable. Selects the load-bearing ones, produces 4-part assertion specs (claim, setup, observation, kind), and persists them to <spec>.assertions.md for review. Specs only, no test code — feeds any downstream test runner.
 ---
 
 # /spec-craft:executable-assertions
@@ -58,3 +58,10 @@ one-line reason; (2) expectations deliberately not encoded, each with a one-line
 (unprovable by machine / not load-bearing / subjective); (3) for each encoded one, the 4-part
 spec (claim; setup; observation with explicit must-contain and must-not-contain where
 exposure is involved; kind). Keep it surgical — specs only.
+
+**Persist the output — do not just print it.** The 4-part specs are a review-before-implementation
+artifact; they must survive the session, not evaporate when it ends. Write the full output (the two
+selection lists as a header, then the specs) to **`<spec>.assertions.md`** — a *sibling* of the
+spec, **not** inside `spec.md` (assertions are pre-test artifacts, not spec prose). Report the path
+you wrote. Always write the file — it is the durable artifact a downstream test-writing / TDD step
+reads to implement the tests; do not skip it.
