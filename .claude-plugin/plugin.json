@@ -1,6 +1,6 @@
 {
   "name": "spec-craft",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Make a spec's definition of done explicit and machine-checkable: add Expectations, then derive executable-assertion specs. Standalone.",
   "author": {"name": "Jeffrey A. Daniels"}
 }
