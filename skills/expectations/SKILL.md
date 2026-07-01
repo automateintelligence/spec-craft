@@ -1,6 +1,6 @@
 ---
 name: expectations
-description: Use when a spec has no explicit definition of done. Adds an Expectations section (success scenarios, failure scenarios, must-nots) in domain language, owned by whoever wanted the outcome. Reads a spec path and writes the section into the spec. Pairs with /spec-craft:executable-assertions.
+description: Use when a spec's definition of done is implicit, or to refine a spec that already has an Expectations section. Adds or updates an Expectations section (success scenarios, failure scenarios, must-nots) in domain language, owned by whoever wanted the outcome. Reads a spec path and writes the section — creating it on a first run, or on a re-run diffing against the existing set to add only the genuinely missing gaps without duplicating what's already there. Pairs with /spec-craft:executable-assertions.
 ---
 
 # /spec-craft:expectations
