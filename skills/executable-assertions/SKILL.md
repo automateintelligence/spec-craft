@@ -44,6 +44,24 @@ For each selected expectation, define the assertion in plain terms (the 4-part s
   `property` when the invariant is meant to hold universally — a single case can pass while
   the invariant is broken.
 
+**Red-team each observation before you keep it — a weak observation freezes a check that passes
+against a stub.** For every assertion ask: *what trivial or hard-coded implementation would satisfy
+this observation while the claim is actually false?* Sharpen the observation until only a real
+implementation can satisfy it. Recurring holes:
+
+- **Hard-coded value.** "Output contains X" is satisfied by a stub that always prints X. Require the
+  output to track a source of truth (a declared set, the real surface) or to vary correctly across
+  inputs — never to merely contain one constant.
+- **One case for a `property`.** A `property` checked on a single input passes while it breaks on
+  another; state the range the observation must hold across (this is the reason to prefer `property`).
+- **Exists, not used.** If the claim is that something is USED, the observation must inspect the
+  caller, not merely that the thing exists.
+- **Self-referencing scope.** A presence/absence observation must exclude the files that legitimately
+  contain the token (e.g. the spec that documents a removal), or it can never pass.
+
+The downstream test-writing step inherits whatever rigor is set here: a sharp observation makes a
+sharp test automatic; a vague one invites a check that reads green on a fake.
+
 Method/scope:
 
 - Work only from expectations in the spec. Do not invent new ones; if writing an assertion
