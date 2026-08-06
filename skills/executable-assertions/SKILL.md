@@ -58,6 +58,11 @@ implementation can satisfy it. Recurring holes:
   caller, not merely that the thing exists.
 - **Self-referencing scope.** A presence/absence observation must exclude the files that legitimately
   contain the token (e.g. the spec that documents a removal), or it can never pass.
+- **A route no input travels.** An observation that calls a unit directly passes while every real
+  caller reaches that unit through an adapter, a registry, or a dispatcher — which may never invoke
+  it on the shapes that matter. The check then certifies a path nothing actually takes. When
+  production reaches the unit indirectly, at least one leg of the observation must go through that
+  indirection (the CLI, the registry, the request path), not the function alone.
 
 The downstream test-writing step inherits whatever rigor is set here: a sharp observation makes a
 sharp test automatic; a vague one invites a check that reads green on a fake.
