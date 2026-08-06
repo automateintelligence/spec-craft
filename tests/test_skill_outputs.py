@@ -36,6 +36,7 @@ def test_executable_assertions_skill_contract_present():
         "contract",
         "red-team",
         "against a stub",
+        "adapter",
     ]:
         assert needle in body, needle
     assert "knowledge" not in body and "tier" not in body  # generalized
