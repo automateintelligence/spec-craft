@@ -75,7 +75,9 @@ Codex exposes plugin skills under their plugin-qualified names only:
 resolves to nothing). Verify with `codex plugin list`: `spec-craft` should show
 "installed, enabled".
 
-### Locally (works today)
+### Locally on Claude Code (dev / `--plugin-dir`)
+
+`--plugin-dir` is a Claude Code flag; it does nothing for Codex.
 
 ```bash
 git clone https://github.com/automateintelligence/spec-craft
@@ -83,11 +85,43 @@ claude --plugin-dir ./spec-craft
 ```
 
 Verify with `claude plugin list` (look for `spec-craft`). The skills are then available as
-`/spec-craft:expectations` and `/spec-craft:executable-assertions` on Claude Code, or
-`$spec-craft:expectations` and `$spec-craft:executable-assertions` on Codex.
+`/spec-craft:expectations` and `/spec-craft:executable-assertions`.
 
-If you use [conductor](https://github.com/automateintelligence/conductor), installing it
-pulls in spec-craft automatically — conductor declares it as a dependency.
+### Locally on Codex (dev)
+
+Codex has no `--plugin-dir`. For most users the marketplace install
+[above](#on-openai-codex) is the right path. To run a local checkout instead, wrap it in a
+one-plugin local marketplace:
+
+```bash
+git clone https://github.com/automateintelligence/spec-craft
+mkdir -p local-mkt/.claude-plugin
+ln -s "$PWD/spec-craft" local-mkt/spec-craft
+cat > local-mkt/.claude-plugin/marketplace.json <<'EOF'
+{
+  "name": "spec-craft-local",
+  "description": "Local spec-craft checkout",
+  "owner": { "name": "you" },
+  "plugins": [
+    { "name": "spec-craft", "source": "./spec-craft", "description": "spec-craft local checkout" }
+  ]
+}
+EOF
+codex plugin marketplace add "$PWD/local-mkt"
+codex plugin add spec-craft@spec-craft-local
+```
+
+Codex copies the checkout into its plugin cache at install time. To pick up later edits, run
+`codex plugin remove spec-craft@spec-craft-local`, then run `codex plugin add` again. Verify
+with `codex plugin list`; the skills are `$spec-craft:expectations` and
+`$spec-craft:executable-assertions`.
+
+### With conductor
+
+If you use [conductor](https://github.com/automateintelligence/conductor) on **Claude Code**,
+installing it pulls in spec-craft automatically — conductor declares it as a dependency.
+**Codex does not resolve plugin dependencies**, so on Codex install spec-craft explicitly
+alongside conductor: `codex plugin add spec-craft@automateintelligence`.
 
 ---
 
