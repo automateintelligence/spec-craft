@@ -1,6 +1,6 @@
 ---
 name: executable-assertions
-description: Use after the expectations skill (/spec-craft:expectations on Claude Code, $spec-craft:expectations on Codex), when a spec's load-bearing expectations need to become machine-checkable. Selects the load-bearing ones, produces 4-part assertion specs (claim, setup, observation, kind), and persists them to <spec>.assertions.md for review. Specs only, no test code — feeds any downstream test runner.
+description: Use after the expectations skill (/spec-craft:expectations on Claude Code, $spec-craft:expectations on Codex), when a spec's load-bearing expectations need to become machine-checkable. Selects the load-bearing ones, produces 4-part assertion specs (claim, setup, observation, kind), and persists them for review to the spec's sibling assertions file (path/to/foo.md -> path/to/foo.assertions.md). Specs only, no test code — feeds any downstream test runner.
 ---
 
 # spec-craft:executable-assertions
@@ -84,7 +84,10 @@ exposure is involved; kind). Keep it surgical — specs only.
 
 **Persist the output — do not just print it.** The 4-part specs are a review-before-implementation
 artifact; they must survive the session, not evaporate when it ends. Write the full output (the two
-selection lists as a header, then the specs) to **`<spec>.assertions.md`** — a *sibling* of the
-spec, **not** inside `spec.md` (assertions are pre-test artifacts, not spec prose). Report the path
-you wrote. Always write the file — it is the durable artifact a downstream test-writing / TDD step
-reads to implement the tests; do not skip it.
+selection lists as a header, then the specs) to the spec's **sibling assertions file**: take the
+spec path and replace its final `.md` with `.assertions.md`, so `path/to/foo.md` →
+**`path/to/foo.assertions.md`**. Never append to the full filename (`foo.md.assertions.md`): one
+spelling on every run, so re-runs update one file instead of leaving divergent copies. Write it
+**beside** the spec, **not** inside the spec itself (assertions are pre-test artifacts, not spec
+prose). Report the path you wrote. Always write the file — it is the durable artifact a downstream
+test-writing / TDD step reads to implement the tests; do not skip it.

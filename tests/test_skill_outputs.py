@@ -1,4 +1,5 @@
 import os
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -42,6 +43,25 @@ def test_executable_assertions_skill_contract_present():
     assert "knowledge" not in body and "tier" not in body  # generalized
     assert "conductor" not in body  # conductor-agnostic
     assert "level" not in body  # 4th part is 'kind', never 'level'
+
+
+def test_executable_assertions_pins_stem_filename():
+    # The assertions file is the spec path with its final `.md` replaced:
+    # path/to/foo.md -> path/to/foo.assertions.md. An undefined `<spec>` let
+    # runs alternate between that and foo.md.assertions.md, leaving divergent
+    # copies of the same assertions beside one spec.
+    raw = open(os.path.join(ROOT, "skills/executable-assertions/SKILL.md")).read()
+    body = " ".join(raw.split())
+    description = raw.split("---")[1]
+    assert "<spec>.assertions.md" not in raw, "undefined <spec> placeholder"
+    assert "`path/to/foo.md` → **`path/to/foo.assertions.md`**" in body
+    assert "path/to/foo.md -> path/to/foo.assertions.md" in description
+    assert "replace its final `.md` with `.assertions.md`" in body
+    for match in re.finditer(re.escape("foo.md.assertions.md"), body):
+        preceding = body[max(0, match.start() - 60) : match.start()].lower()
+        assert "never" in preceding, (
+            "the legacy foo.md.assertions.md spelling may appear only as forbidden"
+        )
 
 
 def test_skill_cross_references_are_host_neutral():
