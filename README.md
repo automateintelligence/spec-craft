@@ -1,7 +1,7 @@
 # spec-craft
 
-**Make a spec's definition of done explicit and machine-checkable.** Two Claude Code
-skills that turn a vague spec into a checkable one: first a definition of done in plain
+**Make a spec's definition of done explicit and machine-checkable.** Two skills for
+Claude Code and OpenAI Codex that turn a vague spec into a checkable one: first a definition of done in plain
 language, then precise assertion specs a test runner can grade.
 
 spec-craft is standalone. It writes specs and assertion specs, never test code, and it
@@ -39,7 +39,8 @@ spec-craft fixes the "done" part.
 
 ## Install
 
-spec-craft is a Claude Code plugin. The runtime artifact is just two `SKILL.md` files plus
+spec-craft is a Claude Code and OpenAI Codex plugin (Codex minimum: Codex CLI `0.155.0`).
+The runtime artifact is just two `SKILL.md` files plus
 a manifest — there is no service to run. (Python 3.12 in this repo is only for the
 plugin's own structural tests, not a dependency for using it.)
 
@@ -60,7 +61,23 @@ claude plugin marketplace add automateintelligence/marketplace
 claude plugin install spec-craft@automateintelligence
 ```
 
-### Locally (works today)
+### On OpenAI Codex
+
+The same marketplace works from Codex. Add it once, then install spec-craft:
+
+```bash
+codex plugin marketplace add automateintelligence/marketplace
+codex plugin add spec-craft@automateintelligence
+```
+
+Codex exposes plugin skills under their plugin-qualified names only:
+`$spec-craft:expectations` and `$spec-craft:executable-assertions` (a bare `$expectations`
+resolves to nothing). Verify with `codex plugin list`: `spec-craft` should show
+"installed, enabled".
+
+### Locally on Claude Code (dev / `--plugin-dir`)
+
+`--plugin-dir` is a Claude Code flag; it does nothing for Codex.
 
 ```bash
 git clone https://github.com/automateintelligence/spec-craft
@@ -70,8 +87,41 @@ claude --plugin-dir ./spec-craft
 Verify with `claude plugin list` (look for `spec-craft`). The skills are then available as
 `/spec-craft:expectations` and `/spec-craft:executable-assertions`.
 
-If you use [conductor](https://github.com/automateintelligence/conductor), installing it
-pulls in spec-craft automatically — conductor declares it as a dependency.
+### Locally on Codex (dev)
+
+Codex has no `--plugin-dir`. For most users the marketplace install
+[above](#on-openai-codex) is the right path. To run a local checkout instead, wrap it in a
+one-plugin local marketplace:
+
+```bash
+git clone https://github.com/automateintelligence/spec-craft
+mkdir -p local-mkt/.claude-plugin
+ln -s "$PWD/spec-craft" local-mkt/spec-craft
+cat > local-mkt/.claude-plugin/marketplace.json <<'EOF'
+{
+  "name": "spec-craft-local",
+  "description": "Local spec-craft checkout",
+  "owner": { "name": "you" },
+  "plugins": [
+    { "name": "spec-craft", "source": "./spec-craft", "description": "spec-craft local checkout" }
+  ]
+}
+EOF
+codex plugin marketplace add "$PWD/local-mkt"
+codex plugin add spec-craft@spec-craft-local
+```
+
+Codex copies the checkout into its plugin cache at install time. To pick up later edits, run
+`codex plugin remove spec-craft@spec-craft-local`, then run `codex plugin add` again. Verify
+with `codex plugin list`; the skills are `$spec-craft:expectations` and
+`$spec-craft:executable-assertions`.
+
+### With conductor
+
+If you use [conductor](https://github.com/automateintelligence/conductor) on **Claude Code**,
+installing it pulls in spec-craft automatically — conductor declares it as a dependency.
+**Codex does not resolve plugin dependencies**, so on Codex install spec-craft explicitly
+alongside conductor: `codex plugin add spec-craft@automateintelligence`.
 
 ---
 
@@ -80,6 +130,10 @@ pulls in spec-craft automatically — conductor declares it as a dependency.
 Run spec-craft after the spec has stabilized and before you generate a plan from it. It sits
 between writing the spec and planning the build: brainstorm → spec → **spec-craft** → plan →
 build.
+
+Invoke the skills with your host's sigil: `/spec-craft:expectations` on Claude Code,
+`$spec-craft:expectations` on Codex. The rest of this README writes the Claude form; on Codex
+swap `/` for `$`.
 
 Two skills, run in sequence on the same spec file. The first writes a definition of done
 into the spec; the second derives the checkable assertions from it.
