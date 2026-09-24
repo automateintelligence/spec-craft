@@ -1,9 +1,9 @@
 ---
 name: expectations
-description: Use when a spec's definition of done is implicit, or to refine a spec that already has an Expectations section. Adds or updates an Expectations section (success scenarios, failure scenarios, must-nots) in domain language, owned by whoever wanted the outcome. Reads a spec path and writes the section — creating it on a first run, or on a re-run diffing against the existing set to add only the genuinely missing gaps without duplicating what's already there. Pairs with /spec-craft:executable-assertions.
+description: Use when a spec's definition of done is implicit, or to refine a spec that already has an Expectations section. Adds or updates an Expectations section (success scenarios, failure scenarios, must-nots) in domain language, owned by whoever wanted the outcome. Reads a spec path and writes the section — creating it on a first run, or on a re-run diffing against the existing set to add only the genuinely missing gaps without duplicating what's already there. Pairs with the executable-assertions skill (/spec-craft:executable-assertions on Claude Code, $spec-craft:executable-assertions on Codex).
 ---
 
-# /spec-craft:expectations
+# spec-craft:expectations
 
 Read the spec at `$ARGUMENTS`. Add an **Expectations** section to it.
 
@@ -44,7 +44,8 @@ Method:
 
 **Scope boundary (important):** produce the Expectations section only. **Do not write tests,
 executable assertions, or any code**, and do not propose how to verify the expectations.
-Encoding expectations as tests is a separate step (`/spec-craft:executable-assertions` → TDD).
+Encoding expectations as tests is a separate step: the `executable-assertions` skill
+(`/spec-craft:executable-assertions` on Claude Code, `$spec-craft:executable-assertions` on Codex) → TDD.
 If you reach for verification mechanics, stop and note it for the next step.
 
 **Re-running on a spec that already has an `## Expectations` section.** When the spec already

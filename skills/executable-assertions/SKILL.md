@@ -1,9 +1,9 @@
 ---
 name: executable-assertions
-description: Use after /spec-craft:expectations, when a spec's load-bearing expectations need to become machine-checkable. Selects the load-bearing ones, produces 4-part assertion specs (claim, setup, observation, kind), and persists them to <spec>.assertions.md for review. Specs only, no test code — feeds any downstream test runner.
+description: Use after the expectations skill (/spec-craft:expectations on Claude Code, $spec-craft:expectations on Codex), when a spec's load-bearing expectations need to become machine-checkable. Selects the load-bearing ones, produces 4-part assertion specs (claim, setup, observation, kind), and persists them to <spec>.assertions.md for review. Specs only, no test code — feeds any downstream test runner.
 ---
 
-# /spec-craft:executable-assertions
+# spec-craft:executable-assertions
 
 Read the spec at `$ARGUMENTS`, including its Expectations section. Turn the **load-bearing**
 expectations into **executable assertions**. Read this whole framing first — the selection
