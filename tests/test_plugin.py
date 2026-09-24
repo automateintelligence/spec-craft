@@ -2,6 +2,8 @@ import json
 import os
 import re
 
+import pytest
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -95,16 +97,37 @@ def test_codex_and_claude_manifests_do_not_drift():
         )
 
 
-def test_codex_manifest_skills_pointer_resolves():
-    skills = _codex_manifest().get("skills")
+def _codex_manifest_path_error(pointer):
+    """Why codex-cli 0.155.0 would ignore this manifest path, or None.
+
+    Mirrors `resolve_manifest_path` in codex-rs/core-plugins/src/manifest.rs
+    (lines 597-635, tag rust-v0.155.0): the raw string must start with `./`,
+    must not be `./` alone, must not contain a `..` component, and must not be
+    absolute after the prefix. Checked on the raw string, before any
+    normalization, because codex checks it before resolving.
+    """
+    if not isinstance(pointer, str) or not pointer.startswith("./"):
+        return "must start with ./"
+    relative = pointer[2:]
+    if not relative:
+        return "must not be ./"
+    if ".." in relative.split("/"):
+        return "must not contain '..'"
+    if relative.startswith("/"):
+        return "must stay within the plugin root"
+    return None
+
+
+def _assert_codex_skills_pointer_valid(skills):
     # codex accepts a string or an array of strings (RawPluginManifestPaths,
-    # manifest.rs lines 129-135) and requires the `./` prefix.
+    # manifest.rs lines 129-135).
     pointers = [skills] if isinstance(skills, str) else skills
     assert isinstance(pointers, list) and pointers, "skills pointer required"
     expected = {"expectations", "executable-assertions"}
     for pointer in pointers:
-        assert isinstance(pointer, str) and pointer.startswith("./"), pointer
-        skills_dir = os.path.normpath(os.path.join(ROOT, pointer))
+        error = _codex_manifest_path_error(pointer)
+        assert error is None, f"codex ignores skills {pointer!r}: {error}"
+        skills_dir = os.path.join(ROOT, pointer)
         assert os.path.isdir(skills_dir), f"{pointer} is not a directory"
         found = {
             name
@@ -112,3 +135,25 @@ def test_codex_manifest_skills_pointer_resolves():
             if os.path.isfile(os.path.join(skills_dir, name, "SKILL.md"))
         }
         assert expected <= found, f"{pointer} is missing {sorted(expected - found)}"
+
+
+def test_codex_manifest_skills_pointer_resolves():
+    _assert_codex_skills_pointer_valid(_codex_manifest().get("skills"))
+
+
+@pytest.mark.parametrize(
+    "skills",
+    [
+        "./skills/../skills/",
+        ["./skills/../skills/"],
+        "skills/",
+        "./",
+        ".//skills/",
+        "./nope/",
+    ],
+)
+def test_codex_skills_pointer_check_rejects_paths_codex_ignores(skills):
+    # Each of these resolves on disk once normalized (or names a missing dir),
+    # but codex 0.155.0 ignores it, so the plugin would ship with no skills.
+    with pytest.raises(AssertionError):
+        _assert_codex_skills_pointer_valid(skills)
