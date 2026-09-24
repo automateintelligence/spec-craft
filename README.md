@@ -46,24 +46,21 @@ plugin's own structural tests, not a dependency for using it.)
 
 ### As a plugin (recommended)
 
-spec-craft is listed in the `automateintelligence` marketplace, so one command installs it
-(no conductor required — spec-craft is standalone):
+spec-craft is listed in the `automateintelligence` marketplace. It is standalone — no
+conductor required.
+
+**Claude Code** — add the marketplace once, then install:
 
 ```
 /plugin marketplace add automateintelligence/marketplace
 /plugin install spec-craft@automateintelligence
 ```
 
-CLI equivalents:
+or from a shell: `claude plugin marketplace add automateintelligence/marketplace`, then
+`claude plugin install spec-craft@automateintelligence`. The skills are
+`/spec-craft:expectations` and `/spec-craft:executable-assertions`.
 
-```bash
-claude plugin marketplace add automateintelligence/marketplace
-claude plugin install spec-craft@automateintelligence
-```
-
-### On OpenAI Codex
-
-The same marketplace works from Codex. Add it once, then install spec-craft:
+**OpenAI Codex** (Codex CLI `0.155.0`+) — same marketplace:
 
 ```bash
 codex plugin marketplace add automateintelligence/marketplace
@@ -72,29 +69,30 @@ codex plugin add spec-craft@automateintelligence
 
 Codex exposes plugin skills under their plugin-qualified names only:
 `$spec-craft:expectations` and `$spec-craft:executable-assertions` (a bare `$expectations`
-resolves to nothing). Verify with `codex plugin list`: `spec-craft` should show
-"installed, enabled".
+resolves to nothing).
 
-### Locally on Claude Code (dev / `--plugin-dir`)
+Verify with `claude plugin list` or `codex plugin list`: `spec-craft` should appear
+(on Codex, "installed, enabled").
 
-`--plugin-dir` is a Claude Code flag; it does nothing for Codex.
+### Without the plugin (from a clone)
+
+For development, or to run an unreleased checkout:
 
 ```bash
 git clone https://github.com/automateintelligence/spec-craft
+```
+
+**Claude Code** — load the checkout as a plugin directory (`--plugin-dir` is a Claude Code
+flag; it does nothing for Codex):
+
+```bash
 claude --plugin-dir ./spec-craft
 ```
 
-Verify with `claude plugin list` (look for `spec-craft`). The skills are then available as
-`/spec-craft:expectations` and `/spec-craft:executable-assertions`.
-
-### Locally on Codex (dev)
-
-Codex has no `--plugin-dir`. For most users the marketplace install
-[above](#on-openai-codex) is the right path. To run a local checkout instead, wrap it in a
-one-plugin local marketplace:
+**OpenAI Codex** — Codex has no `--plugin-dir`; wrap the checkout in a one-plugin local
+marketplace:
 
 ```bash
-git clone https://github.com/automateintelligence/spec-craft
 mkdir -p local-mkt/.claude-plugin
 ln -s "$PWD/spec-craft" local-mkt/spec-craft
 cat > local-mkt/.claude-plugin/marketplace.json <<'EOF'
@@ -112,9 +110,7 @@ codex plugin add spec-craft@spec-craft-local
 ```
 
 Codex copies the checkout into its plugin cache at install time. To pick up later edits, run
-`codex plugin remove spec-craft@spec-craft-local`, then run `codex plugin add` again. Verify
-with `codex plugin list`; the skills are `$spec-craft:expectations` and
-`$spec-craft:executable-assertions`.
+`codex plugin remove spec-craft@spec-craft-local`, then run `codex plugin add` again.
 
 ### With conductor
 
